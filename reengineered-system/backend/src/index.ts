@@ -5,6 +5,9 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { testConnection } from './config/database';
 import authRoutes from './routes/auth.routes';
+import itemRoutes from './routes/item.routes';
+import transactionRoutes from './routes/transaction.routes';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 
 dotenv.config();
 
@@ -20,11 +23,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/items', itemRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Error handling
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Start server
 const startServer = async () => {

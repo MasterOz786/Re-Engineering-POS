@@ -1,10 +1,12 @@
 import { IItemRepository } from '../repositories/item.repository';
+import { ICustomerRepository } from '../repositories/customer.repository';
+import { IRentalRepository } from '../repositories/rental.repository';
 import { ITransactionService } from './transaction.service';
 import { CreateRentalDTO, ProcessReturnDTO, ReturnResult, RentalItemDTO } from '../types';
 import { RENTAL } from '../utils/constants';
 import Customer from '../models/Customer';
 import Rental from '../models/Rental';
-import sequelize from '../config/database';
+import Item from '../models/Item';
 
 export interface IRentalService {
   createRental(rentalData: CreateRentalDTO): Promise<Rental>;
@@ -16,6 +18,8 @@ export interface IRentalService {
 export class RentalService implements IRentalService {
   constructor(
     private itemRepository: IItemRepository,
+    private customerRepository: ICustomerRepository,
+    private rentalRepository: IRentalRepository,
     private transactionService: ITransactionService
   ) {}
 
@@ -92,19 +96,11 @@ export class RentalService implements IRentalService {
   }
 
   async getOutstandingRentals(customerId: number): Promise<Rental[]> {
-    return await Rental.findAll({
-      where: {
-        customer_id: customerId,
-        is_returned: false
-      },
-      include: [{ model: Customer }, { model: sequelize.models.Item }]
-    });
+    return await this.rentalRepository.findOutstandingByCustomer(customerId);
   }
 
   async processReturn(returnData: ProcessReturnDTO): Promise<ReturnResult> {
-    const rental = await Rental.findByPk(returnData.rentalId, {
-      include: [{ model: sequelize.models.Item }]
-    });
+    const rental = await this.rentalRepository.findById(returnData.rentalId);
 
     if (!rental) {
       throw new Error('Rental not found');
@@ -117,8 +113,8 @@ export class RentalService implements IRentalService {
     const lateFee = await this.calculateLateFees(rental.id);
     const returnDate = new Date();
 
-    await rental.update({
-      returnDate: returnDate,
+    await this.rentalRepository.update(rental.id, {
+      return_date: returnDate,
       is_returned: true,
       late_fee: lateFee
     });
@@ -137,7 +133,7 @@ export class RentalService implements IRentalService {
       items: [{
         itemId: rental.item_id,
         quantity: rental.quantity,
-        unitPrice: item!.price
+        unitPrice: parseFloat(item!.price.toString())
       }],
       totalAmount: lateFee
     });
@@ -151,7 +147,7 @@ export class RentalService implements IRentalService {
   }
 
   async calculateLateFees(rentalId: number): Promise<number> {
-    const rental = await Rental.findByPk(rentalId);
+    const rental = await this.rentalRepository.findById(rentalId);
     if (!rental) {
       throw new Error('Rental not found');
     }
@@ -165,7 +161,8 @@ export class RentalService implements IRentalService {
 
     const daysLate = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
     const item = await this.itemRepository.findById(rental.item_id);
-    const dailyFee = item!.price * rental.quantity * RENTAL.LATE_FEE_RATE_PER_DAY;
+    const itemPrice = parseFloat(item!.price.toString());
+    const dailyFee = itemPrice * rental.quantity * RENTAL.LATE_FEE_RATE_PER_DAY;
     
     return dailyFee * daysLate;
   }

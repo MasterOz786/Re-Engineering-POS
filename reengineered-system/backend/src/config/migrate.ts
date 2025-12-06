@@ -3,7 +3,10 @@ import Employee from '../models/Employee';
 import Item from '../models/Item';
 import Customer from '../models/Customer';
 import Transaction from '../models/Transaction';
+import TransactionItem from '../models/TransactionItem';
 import Rental from '../models/Rental';
+import Coupon from '../models/Coupon';
+import EmployeeLog from '../models/EmployeeLog';
 
 const runMigrations = async () => {
   try {

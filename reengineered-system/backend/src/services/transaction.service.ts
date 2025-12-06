@@ -3,6 +3,7 @@ import { TransactionItem, CreateTransactionDTO } from '../types';
 import { IItemRepository } from '../repositories/item.repository';
 import { IPricingService } from './pricing.service';
 import Transaction from '../models/Transaction';
+import TransactionItemModel from '../models/TransactionItem';
 import sequelize from '../config/database';
 
 export interface ITransactionService {
@@ -19,17 +20,37 @@ export class TransactionService implements ITransactionService {
 
   async createTransaction(data: CreateTransactionDTO): Promise<Transaction> {
     const total = this.calculateTotal(data.items);
+    const transaction = await sequelize.transaction();
     
-    return await Transaction.create({
-      transaction_type: data.type,
-      employee_id: data.employeeId,
-      customer_id: data.customerId || null,
-      total_amount: total.total,
-      tax_amount: total.tax,
-      discount_amount: total.discount,
-      coupon_code: data.couponCode || null,
-      status: 'Completed'
-    });
+    try {
+      const newTransaction = await Transaction.create({
+        transaction_type: data.type,
+        employee_id: data.employeeId,
+        customer_id: data.customerId || null,
+        total_amount: total.total,
+        tax_amount: total.tax,
+        discount_amount: total.discount,
+        coupon_code: data.couponCode || null,
+        status: 'Completed'
+      }, { transaction });
+
+      // Create transaction items
+      for (const item of data.items) {
+        await TransactionItemModel.create({
+          transaction_id: newTransaction.id,
+          item_id: item.itemId,
+          quantity: item.quantity,
+          unit_price: item.unitPrice,
+          subtotal: item.unitPrice * item.quantity
+        }, { transaction });
+      }
+
+      await transaction.commit();
+      return newTransaction;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 
   async updateInventoryForTransaction(
