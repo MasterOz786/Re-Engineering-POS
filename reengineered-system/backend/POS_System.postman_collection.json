@@ -1,0 +1,863 @@
+{
+	"info": {
+		"_postman_id": "pos-system-api-collection",
+		"name": "POS System API",
+		"description": "Complete API collection for the Reengineered Point of Sale System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check if the server is running and healthy"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"ok\",\n    \"timestamp\": \"2025-12-06T23:43:58.294Z\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"    pm.environment.set(\"user_id\", jsonData.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive JWT token"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n        \"id\": 1,\n        \"username\": \"admin\",\n        \"first_name\": \"Admin\",\n        \"last_name\": \"User\",\n        \"position\": \"Admin\"\n    }\n}"
+						},
+						{
+							"name": "Invalid Credentials",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"wrongpassword\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Invalid credentials\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Validate Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/validate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"validate"
+							]
+						},
+						"description": "Validate JWT token and get user information"
+					},
+					"response": [
+						{
+							"name": "Valid Token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/validate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"validate"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"valid\": true,\n    \"user\": {\n        \"id\": 1,\n        \"username\": \"admin\",\n        \"position\": \"Admin\"\n    }\n}"
+						},
+						{
+							"name": "Invalid Token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer invalid_token"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/validate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"validate"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Invalid token\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Items",
+			"item": [
+				{
+					"name": "Get All Items",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/items",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"items"
+							]
+						},
+						"description": "Get all items from inventory (requires authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/items",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"items"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"item_code\": \"ITEM001\",\n        \"name\": \"Laptop\",\n        \"price\": \"999.99\",\n        \"quantity\": 10,\n        \"category\": \"Electronics\",\n        \"created_at\": \"2025-12-06T10:00:00.000Z\",\n        \"updated_at\": \"2025-12-06T10:00:00.000Z\"\n    },\n    {\n        \"id\": 2,\n        \"item_code\": \"ITEM002\",\n        \"name\": \"Mouse\",\n        \"price\": \"29.99\",\n        \"quantity\": 50,\n        \"category\": \"Electronics\",\n        \"created_at\": \"2025-12-06T10:00:00.000Z\",\n        \"updated_at\": \"2025-12-06T10:00:00.000Z\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Item by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/items/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"items",
+								"1"
+							]
+						},
+						"description": "Get a specific item by ID (requires authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/items/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"items",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"item_code\": \"ITEM001\",\n    \"name\": \"Laptop\",\n    \"price\": \"999.99\",\n    \"quantity\": 10,\n    \"category\": \"Electronics\",\n    \"created_at\": \"2025-12-06T10:00:00.000Z\",\n    \"updated_at\": \"2025-12-06T10:00:00.000Z\"\n}"
+						},
+						{
+							"name": "Item Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/items/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"items",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Item not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"item_code\": \"ITEM003\",\n    \"name\": \"Keyboard\",\n    \"price\": 49.99,\n    \"quantity\": 30,\n    \"category\": \"Electronics\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/items",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"items"
+							]
+						},
+						"description": "Create a new item (requires Admin authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"item_code\": \"ITEM003\",\n    \"name\": \"Keyboard\",\n    \"price\": 49.99,\n    \"quantity\": 30,\n    \"category\": \"Electronics\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/items",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"items"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 3,\n    \"item_code\": \"ITEM003\",\n    \"name\": \"Keyboard\",\n    \"price\": \"49.99\",\n    \"quantity\": 30,\n    \"category\": \"Electronics\",\n    \"created_at\": \"2025-12-06T10:00:00.000Z\",\n    \"updated_at\": \"2025-12-06T10:00:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Gaming Keyboard\",\n    \"price\": 59.99,\n    \"quantity\": 25,\n    \"category\": \"Electronics\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/items/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"items",
+								"3"
+							]
+						},
+						"description": "Update an existing item (requires Admin authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Gaming Keyboard\",\n    \"price\": 59.99,\n    \"quantity\": 25,\n    \"category\": \"Electronics\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/items/3",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"items",
+										"3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 3,\n    \"item_code\": \"ITEM003\",\n    \"name\": \"Gaming Keyboard\",\n    \"price\": \"59.99\",\n    \"quantity\": 25,\n    \"category\": \"Electronics\",\n    \"created_at\": \"2025-12-06T10:00:00.000Z\",\n    \"updated_at\": \"2025-12-06T10:05:00.000Z\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Create Sale",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\n            \"itemId\": 1,\n            \"quantity\": 2,\n            \"unitPrice\": 999.99\n        },\n        {\n            \"itemId\": 2,\n            \"quantity\": 1,\n            \"unitPrice\": 29.99\n        }\n    ],\n    \"customerId\": 1,\n    \"couponCode\": \"SAVE10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions/sale",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"sale"
+							]
+						},
+						"description": "Create a new sale transaction (requires authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\": [\n        {\n            \"itemId\": 1,\n            \"quantity\": 2,\n            \"unitPrice\": 999.99\n        },\n        {\n            \"itemId\": 2,\n            \"quantity\": 1,\n            \"unitPrice\": 29.99\n        }\n    ],\n    \"customerId\": 1,\n    \"couponCode\": \"SAVE10\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/transactions/sale",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										"sale"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"transaction_type\": \"Sale\",\n    \"employee_id\": 1,\n    \"customer_id\": 1,\n    \"total_amount\": \"2029.97\",\n    \"tax_amount\": \"162.40\",\n    \"discount_amount\": \"202.99\",\n    \"coupon_code\": \"SAVE10\",\n    \"status\": \"Completed\",\n    \"created_at\": \"2025-12-06T10:00:00.000Z\",\n    \"items\": [\n        {\n            \"id\": 1,\n            \"transaction_id\": 1,\n            \"item_id\": 1,\n            \"quantity\": 2,\n            \"unit_price\": \"999.99\",\n            \"subtotal\": \"1999.98\"\n        },\n        {\n            \"id\": 2,\n            \"transaction_id\": 1,\n            \"item_id\": 2,\n            \"quantity\": 1,\n            \"unit_price\": \"29.99\",\n            \"subtotal\": \"29.99\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Rental",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": 1,\n    \"itemId\": 1,\n    \"quantity\": 1,\n    \"rentalDate\": \"2025-12-06\",\n    \"dueDate\": \"2025-12-13\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions/rental",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"rental"
+							]
+						},
+						"description": "Create a new rental transaction (requires authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": 1,\n    \"itemId\": 1,\n    \"quantity\": 1,\n    \"rentalDate\": \"2025-12-06\",\n    \"dueDate\": \"2025-12-13\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/transactions/rental",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										"rental"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"transaction_id\": 1,\n    \"customer_id\": 1,\n    \"item_id\": 1,\n    \"rental_date\": \"2025-12-06\",\n    \"due_date\": \"2025-12-13\",\n    \"return_date\": null,\n    \"is_returned\": false,\n    \"late_fee\": \"0.00\",\n    \"quantity\": 1,\n    \"created_at\": \"2025-12-06T10:00:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Process Return",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rentalId\": 1,\n    \"returnDate\": \"2025-12-10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions/return",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"return"
+							]
+						},
+						"description": "Process a rental return (requires authentication)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rentalId\": 1,\n    \"returnDate\": \"2025-12-10\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/transactions/return",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										"return"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"transaction_id\": 1,\n    \"customer_id\": 1,\n    \"item_id\": 1,\n    \"rental_date\": \"2025-12-06\",\n    \"due_date\": \"2025-12-13\",\n    \"return_date\": \"2025-12-10\",\n    \"is_returned\": true,\n    \"late_fee\": \"0.00\",\n    \"quantity\": 1,\n    \"created_at\": \"2025-12-06T10:00:00.000Z\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+
