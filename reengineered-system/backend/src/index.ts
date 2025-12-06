@@ -38,7 +38,10 @@ app.use(errorHandler);
 // Start server
 const startServer = async () => {
   try {
-    await testConnection();
+    // Try to connect to database, but don't block server startup
+    testConnection().catch(err => {
+      console.warn('⚠️  Database connection failed, but server will continue:', err.message);
+    });
     
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);

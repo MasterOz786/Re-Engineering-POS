@@ -4,9 +4,9 @@ import sequelize from '../config/database';
 export interface CustomerAttributes {
   id?: number;
   phone_number: string;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  email?: string | null;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -14,9 +14,9 @@ export interface CustomerAttributes {
 class Customer extends Model<CustomerAttributes> implements CustomerAttributes {
   public id!: number;
   public phone_number!: string;
-  public first_name!: string | null;
-  public last_name!: string | null;
-  public email!: string | null;
+  public first_name?: string | null;
+  public last_name?: string | null;
+  public email?: string | null;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 }

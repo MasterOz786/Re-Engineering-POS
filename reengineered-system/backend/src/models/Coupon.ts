@@ -6,8 +6,8 @@ export interface CouponAttributes {
   code: string;
   discount_percentage: number;
   is_active?: boolean;
-  valid_from?: Date;
-  valid_until?: Date;
+  valid_from?: Date | null;
+  valid_until?: Date | null;
   created_at?: Date;
 }
 
@@ -16,8 +16,8 @@ class Coupon extends Model<CouponAttributes> implements CouponAttributes {
   public code!: string;
   public discount_percentage!: number;
   public is_active!: boolean;
-  public valid_from!: Date | null;
-  public valid_until!: Date | null;
+  public valid_from?: Date | null;
+  public valid_until?: Date | null;
   public readonly created_at!: Date;
 }
 

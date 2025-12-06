@@ -6,12 +6,12 @@ import Transaction from './Transaction';
 
 export interface RentalAttributes {
   id?: number;
-  transaction_id?: number;
+  transaction_id?: number | null;
   customer_id: number;
   item_id: number;
   rental_date: Date;
   due_date: Date;
-  return_date?: Date;
+  return_date?: Date | null;
   is_returned?: boolean;
   late_fee?: number;
   quantity: number;
@@ -20,12 +20,12 @@ export interface RentalAttributes {
 
 class Rental extends Model<RentalAttributes> implements RentalAttributes {
   public id!: number;
-  public transaction_id!: number | null;
+  public transaction_id?: number | null;
   public customer_id!: number;
   public item_id!: number;
   public rental_date!: Date;
   public due_date!: Date;
-  public return_date!: Date | null;
+  public return_date?: Date | null;
   public is_returned!: boolean;
   public late_fee!: number;
   public quantity!: number;

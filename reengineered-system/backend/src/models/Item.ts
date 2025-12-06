@@ -7,7 +7,7 @@ export interface ItemAttributes {
   name: string;
   price: number;
   quantity: number;
-  category?: string;
+  category?: string | null;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -18,7 +18,7 @@ class Item extends Model<ItemAttributes> implements ItemAttributes {
   public name!: string;
   public price!: number;
   public quantity!: number;
-  public category!: string | null;
+  public category?: string | null;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
 }

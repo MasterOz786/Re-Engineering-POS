@@ -6,12 +6,12 @@ import Customer from './Customer';
 export interface TransactionAttributes {
   id?: number;
   transaction_type: 'Sale' | 'Rental' | 'Return';
-  employee_id?: number;
-  customer_id?: number;
+  employee_id?: number | null;
+  customer_id?: number | null;
   total_amount: number;
   tax_amount?: number;
   discount_amount?: number;
-  coupon_code?: string;
+  coupon_code?: string | null;
   status?: string;
   created_at?: Date;
 }
@@ -19,12 +19,12 @@ export interface TransactionAttributes {
 class Transaction extends Model<TransactionAttributes> implements TransactionAttributes {
   public id!: number;
   public transaction_type!: 'Sale' | 'Rental' | 'Return';
-  public employee_id!: number | null;
-  public customer_id!: number | null;
+  public employee_id?: number | null;
+  public customer_id?: number | null;
   public total_amount!: number;
   public tax_amount!: number;
   public discount_amount!: number;
-  public coupon_code!: string | null;
+  public coupon_code?: string | null;
   public status!: string;
   public readonly created_at!: Date;
 }
