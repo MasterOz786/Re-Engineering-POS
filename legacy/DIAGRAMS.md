@@ -74,9 +74,9 @@ graph TB
     FileIO --> TempFile
     FileIO --> LogFile
     
-    style PointOfSale fill:#ff9999
-    style Inventory fill:#99ccff
-    style FileIO fill:#ffcc99
+    style PointOfSale fill:#ffffff
+    style Inventory fill:#ffffff
+    style FileIO fill:#ffffff
 ```
 
 ### Legacy System Component Diagram
@@ -129,8 +129,8 @@ graph LR
     K --> R
     P --> S
     
-    style O fill:#ff9999
-    style K fill:#99ff99
+    style O fill:#ffffff
+    style K fill:#ffffff
 ```
 
 ---
@@ -222,10 +222,10 @@ graph TB
     
     ErrorMW --> API
     
-    style React fill:#61dafb
-    style API fill:#339933
-    style PostgreSQL fill:#336791
-    style ORM fill:#52b0e7
+    style React fill:#ffffff
+    style API fill:#ffffff
+    style PostgreSQL fill:#ffffff
+    style ORM fill:#ffffff
 ```
 
 ### Reengineered System Component Diagram
@@ -329,9 +329,9 @@ graph TB
     ItemRepository --> DB
     TransRepository --> DB
     
-    style LoginPage fill:#61dafb
-    style AuthService fill:#339933
-    style DB fill:#336791
+    style LoginPage fill:#ffffff
+    style AuthService fill:#ffffff
+    style DB fill:#ffffff
 ```
 
 ---
@@ -1038,8 +1038,8 @@ graph TB
     K --> M
     L --> N
     
-    style I fill:#ff9999
-    style H fill:#99ff99
+    style I fill:#ffffff
+    style H fill:#ffffff
 ```
 
 ### Reengineered System Components
@@ -1094,9 +1094,9 @@ graph TB
     
     E --> H
     
-    style A fill:#61dafb
-    style E fill:#339933
-    style M fill:#52b0e7
+    style A fill:#ffffff
+    style E fill:#ffffff
+    style M fill:#ffffff
 ```
 
 ---
@@ -1118,8 +1118,8 @@ graph TB
     B --> C
     C --> D
     
-    style A fill:#ffcccc
-    style D fill:#ffcccc
+    style A fill:#ffffff
+    style D fill:#ffffff
 ```
 
 ### Reengineered System Deployment
@@ -1170,10 +1170,10 @@ graph TB
     E --> K
     F --> K
     
-    style A fill:#61dafb
-    style C fill:#339933
-    style G fill:#336791
-    style J fill:#dc382d
+    style A fill:#ffffff
+    style C fill:#ffffff
+    style G fill:#ffffff
+    style J fill:#ffffff
 ```
 
 ---
@@ -1201,9 +1201,9 @@ flowchart TD
     C -->|15. Save Invoice| G[Write saleInvoiceRecord.txt]
     C -->|16. Delete Temp| H[Delete temp.txt]
     
-    style C fill:#ff9999
-    style D fill:#ffcc99
-    style F fill:#ffcc99
+    style C fill:#ffffff
+    style D fill:#ffffff
+    style F fill:#ffffff
 ```
 
 ### Reengineered System - Sale Transaction Data Flow
@@ -1240,9 +1240,9 @@ flowchart TD
     G -->|27. 201 Created| B
     B -->|28. Show Receipt| A
     
-    style B fill:#61dafb
-    style I fill:#339933
-    style E fill:#336791
+    style B fill:#ffffff
+    style I fill:#ffffff
+    style E fill:#ffffff
 ```
 
 ---
@@ -1365,8 +1365,8 @@ graph TB
         R4 --> R5
     end
     
-    style L4 fill:#ffcccc
-    style R5 fill:#ccffcc
+    style L4 fill:#ffffff
+    style R5 fill:#ffffff
 ```
 
 ---
