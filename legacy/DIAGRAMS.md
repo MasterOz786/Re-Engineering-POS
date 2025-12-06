@@ -1208,6 +1208,10 @@ graph TB
     style C fill:#ffffff
     style G fill:#ffffff
     style J fill:#ffffff
+    style INIT35 fill:#ffffff
+    style INIT36 fill:#ffffff
+    style INIT37 fill:#ffffff
+    style INIT38 fill:#ffffff
 ```
 
 ---
