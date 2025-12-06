@@ -20,7 +20,7 @@
 
 ```mermaid
 graph TB
-    subgraph "Presentation Layer"
+    subgraph INIT1["Presentation Layer"]
         Login[Login Interface]
         Cashier[Cashier Interface]
         Admin[Admin Interface]
@@ -28,7 +28,7 @@ graph TB
         Payment[Payment Interface]
     end
     
-    subgraph "Business Logic Layer"
+    subgraph INIT2["Business Logic Layer"]
         POSSystem[POSSystem]
         EmployeeMgmt[EmployeeManagement]
         PointOfSale[PointOfSale<br/>Abstract]
@@ -39,11 +39,11 @@ graph TB
         Management[Management]
     end
     
-    subgraph "Data Access Layer"
+    subgraph INIT3["Data Access Layer"]
         FileIO[File I/O Operations]
     end
     
-    subgraph "Data Storage"
+    subgraph INIT4["Data Storage"]
         EmpDB[(employeeDatabase.txt)]
         ItemDB[(itemDatabase.txt)]
         UserDB[(userDatabase.txt)]
@@ -77,13 +77,17 @@ graph TB
     style PointOfSale fill:#ffffff
     style Inventory fill:#ffffff
     style FileIO fill:#ffffff
+    style INIT1 fill:#ffffff
+    style INIT2 fill:#ffffff
+    style INIT3 fill:#ffffff
+    style INIT4 fill:#ffffff
 ```
 
 ### Legacy System Component Diagram
 
 ```mermaid
 graph LR
-    subgraph "GUI Components"
+    subgraph INIT5["GUI Components"]
         A[Login_Interface]
         B[Cashier_Interface]
         C[Admin_Interface]
@@ -94,7 +98,7 @@ graph LR
         H[UpdateEmployee_Interface]
     end
     
-    subgraph "Core Business Logic"
+    subgraph INIT6["Core Business Logic"]
         I[POSSystem]
         J[EmployeeManagement]
         K[PointOfSale]
@@ -105,7 +109,7 @@ graph LR
         P[Management]
     end
     
-    subgraph "Data Entities"
+    subgraph INIT7["Data Entities"]
         Q[Employee]
         R[Item]
         S[ReturnItem]
@@ -131,6 +135,9 @@ graph LR
     
     style O fill:#ffffff
     style K fill:#ffffff
+    style INIT5 fill:#ffffff
+    style INIT6 fill:#ffffff
+    style INIT7 fill:#ffffff
 ```
 
 ---
@@ -141,20 +148,20 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "Client Layer"
+    subgraph INIT8["Client Layer"]
         Browser[Web Browser]
         React[React Application]
         Router[React Router]
         State[State Management<br/>Redux/Context]
     end
     
-    subgraph "API Layer - Express.js"
+    subgraph INIT9["API Layer - Express.js"]
         API[Express Server]
         AuthMW[Auth Middleware]
         ValidMW[Validation Middleware]
         ErrorMW[Error Middleware]
         
-        subgraph "Controllers"
+        subgraph INIT10["Controllers"]
             AuthCtrl[Auth Controller]
             ItemCtrl[Item Controller]
             TransCtrl[Transaction Controller]
@@ -163,8 +170,8 @@ graph TB
         end
     end
     
-    subgraph "Business Logic Layer"
-        subgraph "Services"
+    subgraph INIT11["Business Logic Layer"]
+        subgraph INIT12["Services"]
             AuthSvc[Auth Service]
             ItemSvc[Item Service]
             TransSvc[Transaction Service]
@@ -174,8 +181,8 @@ graph TB
         end
     end
     
-    subgraph "Data Access Layer"
-        subgraph "Repositories"
+    subgraph INIT13["Data Access Layer"]
+        subgraph INIT14["Repositories"]
             EmpRepo[Employee Repository]
             ItemRepo[Item Repository]
             TransRepo[Transaction Repository]
@@ -184,7 +191,7 @@ graph TB
         ORM[Sequelize ORM]
     end
     
-    subgraph "Database Layer"
+    subgraph INIT15["Database Layer"]
         PostgreSQL[(PostgreSQL Database)]
     end
     
@@ -226,14 +233,22 @@ graph TB
     style API fill:#ffffff
     style PostgreSQL fill:#ffffff
     style ORM fill:#ffffff
+    style INIT8 fill:#ffffff
+    style INIT9 fill:#ffffff
+    style INIT10 fill:#ffffff
+    style INIT11 fill:#ffffff
+    style INIT12 fill:#ffffff
+    style INIT13 fill:#ffffff
+    style INIT14 fill:#ffffff
+    style INIT15 fill:#ffffff
 ```
 
 ### Reengineered System Component Diagram
 
 ```mermaid
 graph TB
-    subgraph "Frontend - React"
-        subgraph "Pages"
+    subgraph INIT16["Frontend - React"]
+        subgraph INIT17["Pages"]
             LoginPage[Login Page]
             Dashboard[Dashboard Page]
             SalesPage[Sales Page]
@@ -243,7 +258,7 @@ graph TB
             EmpMgmtPage[Employee Management]
         end
         
-        subgraph "Components"
+        subgraph INIT18["Components"]
             LoginForm[Login Form]
             ItemList[Item List]
             TransactionForm[Transaction Form]
@@ -251,48 +266,48 @@ graph TB
             PaymentForm[Payment Form]
         end
         
-        subgraph "Services"
+        subgraph INIT19["Services"]
             AuthAPI[Auth API Service]
             ItemAPI[Item API Service]
             TransAPI[Transaction API Service]
         end
         
-        subgraph "State"
+        subgraph INIT20["State"]
             AuthStore[Auth Store]
             ItemStore[Item Store]
             CartStore[Cart Store]
         end
     end
     
-    subgraph "Backend - Express"
-        subgraph "Routes"
+    subgraph INIT21["Backend - Express"]
+        subgraph INIT22["Routes"]
             AuthRoute[/api/auth]
             ItemRoute[/api/items]
             TransRoute[/api/transactions]
             RentalRoute[/api/rentals]
         end
         
-        subgraph "Controllers"
+        subgraph INIT23["Controllers"]
             AuthController[Auth Controller]
             ItemController[Item Controller]
             TransController[Transaction Controller]
         end
         
-        subgraph "Services"
+        subgraph INIT24["Services"]
             AuthService[Auth Service]
             ItemService[Item Service]
             TransService[Transaction Service]
             PricingService[Pricing Service]
         end
         
-        subgraph "Repositories"
+        subgraph INIT25["Repositories"]
             EmpRepository[Employee Repository]
             ItemRepository[Item Repository]
             TransRepository[Transaction Repository]
         end
     end
     
-    subgraph "Database"
+    subgraph INIT26["Database"]
         DB[(PostgreSQL)]
     end
     
@@ -332,6 +347,17 @@ graph TB
     style LoginPage fill:#ffffff
     style AuthService fill:#ffffff
     style DB fill:#ffffff
+    style INIT16 fill:#ffffff
+    style INIT17 fill:#ffffff
+    style INIT18 fill:#ffffff
+    style INIT19 fill:#ffffff
+    style INIT20 fill:#ffffff
+    style INIT21 fill:#ffffff
+    style INIT22 fill:#ffffff
+    style INIT23 fill:#ffffff
+    style INIT24 fill:#ffffff
+    style INIT25 fill:#ffffff
+    style INIT26 fill:#ffffff
 ```
 
 ---
@@ -997,7 +1023,7 @@ erDiagram
 
 ```mermaid
 graph TB
-    subgraph "GUI Components"
+    subgraph INIT27["GUI Components"]
         A[Login_Interface]
         B[Cashier_Interface]
         C[Admin_Interface]
@@ -1005,7 +1031,7 @@ graph TB
         E[Payment_Interface]
     end
     
-    subgraph "Business Components"
+    subgraph INIT28["Business Components"]
         F[POSSystem]
         G[EmployeeManagement]
         H[PointOfSale]
@@ -1013,7 +1039,7 @@ graph TB
         J[Management]
     end
     
-    subgraph "Data Components"
+    subgraph INIT29["Data Components"]
         K[FileReader]
         L[FileWriter]
         M[BufferedReader]
@@ -1040,34 +1066,37 @@ graph TB
     
     style I fill:#ffffff
     style H fill:#ffffff
+    style INIT27 fill:#ffffff
+    style INIT28 fill:#ffffff
+    style INIT29 fill:#ffffff
 ```
 
 ### Reengineered System Components
 
 ```mermaid
 graph TB
-    subgraph "Frontend Components"
+    subgraph INIT30["Frontend Components"]
         A[React App]
         B[React Router]
         C[Redux Store]
         D[API Client]
     end
     
-    subgraph "Backend Components"
+    subgraph INIT31["Backend Components"]
         E[Express Server]
         F[Auth Middleware]
         G[Validation Middleware]
         H[Error Handler]
     end
     
-    subgraph "Service Components"
+    subgraph INIT32["Service Components"]
         I[Auth Service]
         J[Transaction Service]
         K[Pricing Service]
         L[Rental Service]
     end
     
-    subgraph "Data Components"
+    subgraph INIT33["Data Components"]
         M[Sequelize ORM]
         N[Repository Layer]
         O[Database Pool]
@@ -1097,6 +1126,10 @@ graph TB
     style A fill:#ffffff
     style E fill:#ffffff
     style M fill:#ffffff
+    style INIT30 fill:#ffffff
+    style INIT31 fill:#ffffff
+    style INIT32 fill:#ffffff
+    style INIT33 fill:#ffffff
 ```
 
 ---
@@ -1107,7 +1140,7 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "Desktop Environment"
+    subgraph INIT34["Desktop Environment"]
         A[User Machine]
         B[Java Runtime]
         C[POS Application]
@@ -1120,30 +1153,31 @@ graph TB
     
     style A fill:#ffffff
     style D fill:#ffffff
+    style INIT34 fill:#ffffff
 ```
 
 ### Reengineered System Deployment
 
 ```mermaid
 graph TB
-    subgraph "Client Tier"
+    subgraph INIT35["Client Tier"]
         A[Web Browser]
         B[React App<br/>Static Files]
     end
     
-    subgraph "Application Tier"
+    subgraph INIT36["Application Tier"]
         C[Load Balancer]
         D[Express Server 1]
         E[Express Server 2]
         F[Express Server N]
     end
     
-    subgraph "Database Tier"
+    subgraph INIT37["Database Tier"]
         G[PostgreSQL<br/>Primary]
         H[PostgreSQL<br/>Replica]
     end
     
-    subgraph "Infrastructure"
+    subgraph INIT38["Infrastructure"]
         I[CDN]
         J[Redis Cache]
         K[File Storage]
@@ -1341,7 +1375,7 @@ stateDiagram-v2
 
 ```mermaid
 graph TB
-    subgraph "Legacy Architecture"
+    subgraph INIT39["Legacy Architecture"]
         L1[GUI Layer]
         L2[Business Logic]
         L3[File I/O]
@@ -1352,7 +1386,7 @@ graph TB
         L3 --> L4
     end
     
-    subgraph "Reengineered Architecture"
+    subgraph INIT40["Reengineered Architecture"]
         R1[React Frontend]
         R2[Express API]
         R3[Service Layer]
@@ -1367,6 +1401,8 @@ graph TB
     
     style L4 fill:#ffffff
     style R5 fill:#ffffff
+    style INIT39 fill:#ffffff
+    style INIT40 fill:#ffffff
 ```
 
 ---
