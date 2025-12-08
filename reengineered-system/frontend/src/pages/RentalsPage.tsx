@@ -16,19 +16,46 @@ interface RentalItem {
   quantity: number;
 }
 
+interface RentalRecord {
+  id: number;
+  item_id: number;
+  customer_id: number;
+  rental_date: string;
+  due_date: string;
+  return_date?: string | null;
+  is_returned: boolean;
+  quantity: number;
+  Item?: {
+    name: string;
+    item_code: string;
+  };
+  Customer?: {
+    phone_number: string;
+  };
+}
+
 export const RentalsPage: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<Item[]>([]);
   const [rentalItems, setRentalItems] = useState<RentalItem[]>([]);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [rentalDate, setRentalDate] = useState(new Date().toISOString().split('T')[0]);
+  const [activeRentals, setActiveRentals] = useState<RentalRecord[]>([]);
+  const [recentRentals, setRecentRentals] = useState<RentalRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingRentals, setLoadingRentals] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [rentalReceipt, setRentalReceipt] = useState<{
+    id: number;
+    items: string;
+    dueDate?: string | Date;
+  } | null>(null);
 
   useEffect(() => {
     loadItems();
+    loadRentals();
   }, []);
 
   const loadItems = async () => {
@@ -40,6 +67,22 @@ export const RentalsPage: React.FC = () => {
       setError(err.response?.data?.error || 'Failed to load items');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRentals = async () => {
+    try {
+      setLoadingRentals(true);
+      const [activeRes, recentRes] = await Promise.all([
+        api.get('/rentals/active?limit=20'),
+        api.get('/rentals?limit=20')
+      ]);
+      setActiveRentals(activeRes.data);
+      setRecentRentals(recentRes.data);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load rentals');
+    } finally {
+      setLoadingRentals(false);
     }
   };
 
@@ -101,18 +144,34 @@ export const RentalsPage: React.FC = () => {
     try {
       setProcessing(true);
       setError('');
-      await api.post('/transactions/rental', {
+      const payload = {
         phoneNumber: phoneNumber.trim(),
         rentalDate: new Date(rentalDate).toISOString(),
         items: rentalItems.map(ri => ({
           itemId: ri.item.id,
           quantity: ri.quantity
         }))
-      });
-      setSuccess('Rental created successfully!');
+      };
+
+      const response = await api.post('/transactions/rental', payload);
+
+      // Capture rental ID and info for the return step
+      const rentalId = response.data?.id;
+      const dueDate = response.data?.due_date || response.data?.dueDate;
+      const itemSummary = rentalItems
+        .map(ri => `${ri.item.name} x${ri.quantity}`)
+        .join(', ');
+
+      setRentalReceipt(rentalId ? { id: rentalId, items: itemSummary, dueDate } : null);
+      setSuccess(
+        rentalId
+          ? `Rental created successfully! Rental ID: ${rentalId}. Keep this ID for returns.`
+          : 'Rental created successfully!'
+      );
       setRentalItems([]);
       setPhoneNumber('');
       setRentalDate(new Date().toISOString().split('T')[0]);
+      loadRentals();
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to create rental');
@@ -131,7 +190,23 @@ export const RentalsPage: React.FC = () => {
       </div>
 
       {error && <div className="error-message">⚠️ {error}</div>}
-      {success && <div className="success-message">✅ {success}</div>}
+      {success && (
+        <div className="success-message">
+          ✅ {success}
+          {rentalReceipt && (
+            <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: 1.6 }}>
+              <div><strong>Rental ID:</strong> {rentalReceipt.id}</div>
+              <div><strong>Items:</strong> {rentalReceipt.items}</div>
+              {rentalReceipt.dueDate && (
+                <div><strong>Due Date:</strong> {new Date(rentalReceipt.dueDate).toLocaleDateString()}</div>
+              )}
+              <div style={{ color: '#2c5282', marginTop: '6px' }}>
+                Use this Rental ID when processing returns.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="rental-layout">
         <div className="items-section">
@@ -191,11 +266,10 @@ export const RentalsPage: React.FC = () => {
                 type="date"
                 value={rentalDate}
                 onChange={(e) => setRentalDate(e.target.value)}
-                max={new Date().toISOString().split('T')[0]}
                 required
               />
               <small style={{ color: '#718096', fontSize: '12px', marginTop: '4px' }}>
-                Due date will be automatically set to 7 days from rental date
+                Due date will be automatically set to 7 days from the rental date you pick
               </small>
             </div>
 
@@ -257,6 +331,106 @@ export const RentalsPage: React.FC = () => {
             </button>
           </form>
         </div>
+      </div>
+
+      <div className="table-container" style={{ marginTop: '20px' }}>
+        <div style={{ padding: '16px' }}>
+          <h2 style={{ margin: 0, color: '#2d3748' }}>Active Rentals</h2>
+        </div>
+        {loadingRentals ? (
+          <div className="loading">Loading rentals...</div>
+        ) : (
+          <div className="table-container" style={{ boxShadow: 'none', margin: '0 0 16px 0' }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Item</th>
+                  <th>Customer Phone</th>
+                  <th>Quantity</th>
+                  <th>Rental Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeRentals.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '24px' }}>
+                      No active rentals
+                    </td>
+                  </tr>
+                ) : (
+                  activeRentals.map((rental) => (
+                    <tr key={rental.id}>
+                      <td>#{rental.id}</td>
+                      <td>{rental.Item?.name || rental.item_id}</td>
+                      <td>{rental.Customer?.phone_number || 'N/A'}</td>
+                      <td>{rental.quantity}</td>
+                      <td>{new Date(rental.rental_date).toLocaleDateString()}</td>
+                      <td>{new Date(rental.due_date).toLocaleDateString()}</td>
+                      <td>
+                        <span className="status-active">Active</span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="table-container" style={{ marginTop: '20px' }}>
+        <div style={{ padding: '16px' }}>
+          <h2 style={{ margin: 0, color: '#2d3748' }}>Recent Rentals</h2>
+        </div>
+        {loadingRentals ? (
+          <div className="loading">Loading rentals...</div>
+        ) : (
+          <div className="table-container" style={{ boxShadow: 'none', margin: '0 0 16px 0' }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Item</th>
+                  <th>Customer Phone</th>
+                  <th>Quantity</th>
+                  <th>Rental Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentRentals.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '24px' }}>
+                      No rentals yet
+                    </td>
+                  </tr>
+                ) : (
+                  recentRentals.map((rental) => (
+                    <tr key={rental.id}>
+                      <td>#{rental.id}</td>
+                      <td>{rental.Item?.name || rental.item_id}</td>
+                      <td>{rental.Customer?.phone_number || 'N/A'}</td>
+                      <td>{rental.quantity}</td>
+                      <td>{new Date(rental.rental_date).toLocaleDateString()}</td>
+                      <td>{new Date(rental.due_date).toLocaleDateString()}</td>
+                      <td>
+                        {rental.is_returned ? (
+                          <span className="status-inactive">Returned</span>
+                        ) : (
+                          <span className="status-active">Active</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

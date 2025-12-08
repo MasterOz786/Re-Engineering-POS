@@ -45,7 +45,7 @@ export const InventoryPage: React.FC = () => {
       setError('');
       setSuccess('');
       await api.post('/items', {
-        item_code: formData.get('item_code'),
+        itemCode: formData.get('item_code'),
         name: formData.get('name'),
         price: parseFloat(formData.get('price') as string),
         quantity: parseInt(formData.get('quantity') as string),

@@ -19,6 +19,21 @@ export class TransactionService implements ITransactionService {
   ) {}
 
   async createTransaction(data: CreateTransactionDTO): Promise<Transaction> {
+    // For sales, ensure stock is available before proceeding
+    if (data.type === 'Sale') {
+      for (const item of data.items) {
+        const dbItem = await this.itemRepository.findById(item.itemId);
+        if (!dbItem) {
+          throw new Error(`Item ${item.itemId} not found`);
+        }
+        if (dbItem.quantity < item.quantity) {
+          throw new Error(
+            `Insufficient stock for ${dbItem.name}. Available: ${dbItem.quantity}, requested: ${item.quantity}`
+          );
+        }
+      }
+    }
+
     const total = this.calculateTotal(data.items);
     const transaction = await sequelize.transaction();
     

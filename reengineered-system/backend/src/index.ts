@@ -7,6 +7,7 @@ import { testConnection } from './config/database';
 import authRoutes from './routes/auth.routes';
 import itemRoutes from './routes/item.routes';
 import transactionRoutes from './routes/transaction.routes';
+import rentalRoutes from './routes/rental.routes';
 import employeeRoutes from './routes/employee.routes';
 import customerRoutes from './routes/customer.routes';
 import statsRoutes from './routes/stats.routes';
@@ -31,6 +32,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/rentals', rentalRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

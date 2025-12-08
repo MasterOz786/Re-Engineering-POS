@@ -13,6 +13,10 @@ export interface IRentalService {
   getOutstandingRentals(customerId: number): Promise<Rental[]>;
   processReturn(returnData: ProcessReturnDTO): Promise<ReturnResult>;
   calculateLateFees(rentalId: number): Promise<number>;
+  getAllRentals(limit?: number): Promise<Rental[]>;
+  getActiveRentals(limit?: number): Promise<Rental[]>;
+  getOutstanding(limit?: number): Promise<Rental[]>;
+  getRentalById(id: number): Promise<Rental>;
 }
 
 export class RentalService implements IRentalService {
@@ -58,12 +62,21 @@ export class RentalService implements IRentalService {
       }
 
       const dueDate = this.calculateDueDate(rentalData.rentalDate);
+      
+      // Convert rentalDate to Date object if it's a string
+      const rentalDateObj = rentalData.rentalDate instanceof Date 
+        ? rentalData.rentalDate 
+        : new Date(rentalData.rentalDate);
+      
+      // Format dates as DATEONLY (YYYY-MM-DD)
+      const rentalDateStr = rentalDateObj.toISOString().split('T')[0];
+      const dueDateStr = dueDate.toISOString().split('T')[0];
 
       const rental = await Rental.create({
-        customerId: customer.id,
-        itemId: item.id,
-        rentalDate: rentalData.rentalDate,
-        dueDate: dueDate,
+        customer_id: customer.id,
+        item_id: item.id,
+        rental_date: rentalDateStr,
+        due_date: dueDateStr,
         quantity: rentalItem.quantity,
         is_returned: false
       });
@@ -97,6 +110,26 @@ export class RentalService implements IRentalService {
 
   async getOutstandingRentals(customerId: number): Promise<Rental[]> {
     return await this.rentalRepository.findOutstandingByCustomer(customerId);
+  }
+
+  async getAllRentals(limit: number = 100): Promise<Rental[]> {
+    return await this.rentalRepository.findAll(limit);
+  }
+
+  async getActiveRentals(limit: number = 100): Promise<Rental[]> {
+    return await this.rentalRepository.findActive(limit);
+  }
+
+  async getOutstanding(limit: number = 100): Promise<Rental[]> {
+    return await this.rentalRepository.findOutstanding(limit);
+  }
+
+  async getRentalById(id: number): Promise<Rental> {
+    const rental = await this.rentalRepository.findById(id);
+    if (!rental) {
+      throw new Error('Rental not found');
+    }
+    return rental;
   }
 
   async processReturn(returnData: ProcessReturnDTO): Promise<ReturnResult> {
