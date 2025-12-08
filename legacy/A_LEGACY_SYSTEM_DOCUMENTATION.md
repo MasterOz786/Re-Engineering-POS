@@ -5,9 +5,13 @@
 2. [Module Inventory](#module-inventory)
 3. [Architecture Diagrams](#architecture-diagrams)
 4. [Class Diagrams](#class-diagrams)
-5. [Code Smells](#code-smells)
-6. [Data Smells](#data-smells)
-7. [Current Limitations](#current-limitations)
+5. [Sequence Diagrams](#sequence-diagrams)
+6. [Entity Relationship Diagram](#entity-relationship-diagram)
+7. [Data Flow Diagrams](#data-flow-diagrams)
+8. [Deployment Diagram](#deployment-diagram)
+9. [Code Smells](#code-smells)
+10. [Data Smells](#data-smells)
+11. [Current Limitations](#current-limitations)
 
 ---
 
@@ -332,6 +336,121 @@ User Login
 2. **Abstract Factory/Template Method** - `PointOfSale.java`
    - Abstract base class defines transaction workflow
    - Concrete implementations (POS, POR, POH) provide specific behavior
+
+**Detailed Class Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#legacy-class-diagrams) for complete class relationships with Mermaid diagram.
+
+---
+
+## Sequence Diagrams
+
+### Login Sequence
+
+The login process follows a sequential flow from user input to interface routing:
+
+**Sequence Flow:**
+1. User enters credentials in Login Interface
+2. Login Interface calls `POSSystem.logIn()`
+3. POSSystem reads `employeeDatabase.txt`
+4. POSSystem validates credentials
+5. POSSystem logs login to `employeeLogfile.txt`
+6. POSSystem routes to appropriate interface (Cashier/Admin)
+
+**Detailed Sequence Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#legacy-system---login-sequence) for complete sequence diagram.
+
+### Sale Transaction Sequence
+
+The sale transaction process involves multiple interactions between components:
+
+**Sequence Flow:**
+1. Cashier selects "Sale" from interface
+2. System creates POS instance
+3. System loads items from `itemDatabase.txt`
+4. Cashier adds items to cart
+5. System calculates totals and tax
+6. Cashier applies coupon (optional)
+7. System processes payment
+8. System updates inventory
+9. System saves transaction to `saleInvoiceRecord.txt`
+
+**Detailed Sequence Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#sale-transaction-sequence) for complete sequence diagram.
+
+### Rental Transaction Sequence
+
+The rental transaction follows a similar pattern with additional rental-specific steps:
+
+**Sequence Flow:**
+1. Cashier selects "Rental" from interface
+2. System creates POR instance
+3. System loads rental items from `rentalDatabase.txt`
+4. Cashier selects item and sets rental dates
+5. System calculates rental fee
+6. System processes payment
+7. System updates rental database
+8. System saves rental record
+
+**Detailed Sequence Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#rental-transaction-sequence) for complete sequence diagram.
+
+---
+
+## Entity Relationship Diagram
+
+### Legacy Data Model
+
+The legacy system uses flat text files with no formal relationships. The conceptual data model includes:
+
+- **Employees**: username, name, position, password
+- **Items**: itemID, itemName, price, quantity, category
+- **Customers**: customerID, name, contact info
+- **Transactions**: transactionID, items, total, tax, date
+- **Rentals**: rentalID, itemID, customerID, rental date, due date, return date
+
+**Note:** Relationships are maintained through manual ID matching in code, not enforced by the data layer.
+
+**Detailed ER Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#legacy-data-model-conceptual) for conceptual entity relationship diagram.
+
+---
+
+## Data Flow Diagrams
+
+### Sale Transaction Data Flow
+
+The sale transaction data flow shows how information moves through the system during a sale:
+
+**Data Flow:**
+1. Cashier input → Cashier Interface
+2. Cashier Interface → POS instance
+3. POS → Read `itemDatabase.txt`
+4. POS → Update cart in memory
+5. POS → Calculate totals
+6. POS → Write `temp.txt` (temporary state)
+7. POS → Process payment
+8. POS → Update `itemDatabase.txt` (inventory)
+9. POS → Write `saleInvoiceRecord.txt` (transaction record)
+10. POS → Delete `temp.txt`
+
+**Detailed Data Flow Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#legacy-system---sale-transaction-data-flow) for complete data flow diagram.
+
+---
+
+## Deployment Diagram
+
+### Legacy System Deployment
+
+The legacy system is deployed as a standalone desktop application:
+
+- **Environment**: Desktop/Workstation
+- **Runtime**: Java Runtime Environment (JRE)
+- **Storage**: Local file system (text files)
+- **Network**: None (single-user, local only)
+
+**Deployment Characteristics:**
+- Single machine deployment
+- No server infrastructure required
+- Files stored in application directory
+- No concurrent user support
+- No remote access
+
+**Detailed Deployment Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#legacy-system-deployment) for deployment architecture diagram.
 
 ---
 

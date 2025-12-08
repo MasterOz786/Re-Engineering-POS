@@ -7,6 +7,7 @@ export interface IItemService {
   getItemById(id: number): Promise<Item>;
   createItem(itemData: CreateItemDTO): Promise<Item>;
   updateItem(id: number, itemData: UpdateItemDTO): Promise<Item>;
+  deleteItem(id: number): Promise<void>;
   checkStockAvailability(itemId: number, requestedQuantity: number): Promise<boolean>;
 }
 
@@ -33,6 +34,10 @@ export class ItemService implements IItemService {
 
   async updateItem(id: number, itemData: UpdateItemDTO): Promise<Item> {
     return await this.itemRepository.update(id, itemData);
+  }
+
+  async deleteItem(id: number): Promise<void> {
+    await this.itemRepository.delete(id);
   }
 
   async checkStockAvailability(itemId: number, requestedQuantity: number): Promise<boolean> {

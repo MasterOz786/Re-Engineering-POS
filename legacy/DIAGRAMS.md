@@ -281,10 +281,10 @@ graph TB
     
     subgraph INIT21["Backend - Express"]
         subgraph INIT22["Routes"]
-            AuthRoute[/api/auth]
-            ItemRoute[/api/items]
-            TransRoute[/api/transactions]
-            RentalRoute[/api/rentals]
+            AuthRoute["/api/auth"]
+            ItemRoute["/api/items"]
+            TransRoute["/api/transactions"]
+            RentalRoute["/api/rentals"]
         end
         
         subgraph INIT23["Controllers"]
@@ -858,59 +858,59 @@ sequenceDiagram
 ### Legacy Data Model (Conceptual)
 
 ```mermaid
-erDiagram
-    EMPLOYEE ||--o{ LOG : "logs"
-    EMPLOYEE ||--o{ TRANSACTION : "processes"
-    CUSTOMER ||--o{ TRANSACTION : "makes"
-    CUSTOMER ||--o{ RENTAL : "has"
-    ITEM ||--o{ TRANSACTION_ITEM : "included in"
-    ITEM ||--o{ RENTAL : "rented as"
-    TRANSACTION ||--o{ TRANSACTION_ITEM : "contains"
-    TRANSACTION ||--o| RENTAL : "creates"
-    COUPON ||--o{ TRANSACTION : "applied to"
-    
-    EMPLOYEE {
-        string username PK
-        string name
-        string position
-        string password
-    }
-    
-    ITEM {
-        int itemID PK
-        string itemName
-        float price
-        int amount
-    }
-    
-    CUSTOMER {
-        long phoneNumber PK
-        string rentalHistory
-    }
-    
-    TRANSACTION {
-        string type
-        datetime timestamp
-        double totalPrice
-        string items
-    }
-    
-    RENTAL {
-        int itemID
-        date rentalDate
-        date dueDate
-        boolean returned
-    }
-    
-    COUPON {
-        string code PK
-    }
-    
-    LOG {
-        string username
-        string action
-        datetime timestamp
-    }
+    erDiagram
+        EMPLOYEE ||--o{ LOG : "logs"
+        EMPLOYEE ||--o{ TRANSACTION : "processes"
+        CUSTOMER ||--o{ TRANSACTION : "makes"
+        CUSTOMER ||--o{ RENTAL : "has"
+        ITEM ||--o{ TRANSACTION_ITEM : "included in"
+        ITEM ||--o{ RENTAL : "rented as"
+        TRANSACTION ||--o{ TRANSACTION_ITEM : "contains"
+        TRANSACTION ||--o| RENTAL : "creates"
+        COUPON ||--o{ TRANSACTION : "applied to"
+        
+        EMPLOYEE {
+            string username PK
+            string name
+            string position
+            string password
+        }
+        
+        ITEM {
+            int itemID PK
+            string itemName
+            float price
+            int amount
+        }
+        
+        CUSTOMER {
+            long phoneNumber PK
+            string rentalHistory
+        }
+        
+        TRANSACTION {
+            string type
+            datetime timestamp
+            double totalPrice
+            string items
+        }
+        
+        RENTAL {
+            int itemID
+            date rentalDate
+            date dueDate
+            boolean returned
+        }
+        
+        COUPON {
+            string code PK
+        }
+        
+        LOG {
+            string username
+            string action
+            datetime timestamp
+        }
 ```
 
 ### Reengineered Database Schema
@@ -1160,54 +1160,36 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph INIT35["Client Tier"]
-        A[Web Browser]
-        B[React App<br/>Static Files]
+    subgraph INIT35["Client"]
+        A[Web Browser<br/>User]
     end
     
-    subgraph INIT36["Application Tier"]
-        C[Load Balancer]
-        D[Express Server 1]
-        E[Express Server 2]
-        F[Express Server N]
+    subgraph INIT36["Web Server"]
+        B[Nginx<br/>Port 80/443<br/>Reverse Proxy]
+        C[React App<br/>Static Files]
     end
     
-    subgraph INIT37["Database Tier"]
-        G[PostgreSQL<br/>Primary]
-        H[PostgreSQL<br/>Replica]
+    subgraph INIT37["Application Server"]
+        D[PM2<br/>Process Manager]
+        E[Node.js/Express<br/>Port 3000<br/>Backend API]
     end
     
-    subgraph INIT38["Infrastructure"]
-        I[CDN]
-        J[Redis Cache]
-        K[File Storage]
+    subgraph INIT38["Database"]
+        F[(PostgreSQL<br/>Port 5432<br/>pos_system)]
     end
     
-    A --> I
-    I --> B
-    A --> C
-    C --> D
-    C --> E
-    C --> F
-    
-    D --> J
-    E --> J
-    F --> J
-    
-    D --> G
-    E --> G
-    F --> G
-    
-    G --> H
-    
-    D --> K
-    E --> K
-    F --> K
+    A -->|HTTPS/HTTP| B
+    B -->|Serve Static| C
+    B -->|Proxy /api/*| E
+    D -->|Manages| E
+    E -->|Database Queries| F
     
     style A fill:#ffffff
+    style B fill:#ffffff
     style C fill:#ffffff
-    style G fill:#ffffff
-    style J fill:#ffffff
+    style D fill:#ffffff
+    style E fill:#ffffff
+    style F fill:#ffffff
     style INIT35 fill:#ffffff
     style INIT36 fill:#ffffff
     style INIT37 fill:#ffffff

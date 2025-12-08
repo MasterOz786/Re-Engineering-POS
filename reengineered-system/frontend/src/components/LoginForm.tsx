@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { authService, LoginCredentials } from '../services/authService';
+import './LoginForm.css';
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -22,58 +23,73 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       await authService.login(credentials);
       onLoginSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h2>POS System Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label>
-            Username:
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1>POS System</h1>
+          <p>Point of Sale Management</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
             <input
+              id="username"
               type="text"
               value={credentials.username}
               onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+              placeholder="Enter your username"
               required
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              disabled={loading}
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label>
-            Password:
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
+              id="password"
               type="password"
               value={credentials.password}
               onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+              placeholder="Enter your password"
               required
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              disabled={loading}
             />
-          </label>
+          </div>
+          
+          {error && (
+            <div className="error-message">
+              <span>⚠️</span> {error}
+            </div>
+          )}
+          
+          <button
+            type="submit"
+            disabled={loading}
+            className="login-button"
+          >
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                Logging in...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </button>
+        </form>
+        
+        <div className="login-footer">
+          <p>Default credentials: admin / admin123</p>
         </div>
-        {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
-

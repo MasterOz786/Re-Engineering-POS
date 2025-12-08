@@ -46,5 +46,15 @@ export class ItemController {
       res.status(400).json({ error: error.message || 'Failed to update item' });
     }
   };
+
+  deleteItem = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id);
+      await this.itemService.deleteItem(id);
+      res.json({ message: 'Item deleted successfully' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message || 'Failed to delete item' });
+    }
+  };
 }
 

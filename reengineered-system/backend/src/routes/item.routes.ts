@@ -9,6 +9,7 @@ router.get('/', authMiddleware, itemController.getAllItems);
 router.get('/:id', authMiddleware, itemController.getItemById);
 router.post('/', authMiddleware, adminOnly, itemController.createItem);
 router.put('/:id', authMiddleware, adminOnly, itemController.updateItem);
+router.delete('/:id', authMiddleware, adminOnly, itemController.deleteItem);
 
 export default router;
 

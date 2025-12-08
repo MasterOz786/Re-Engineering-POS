@@ -3,12 +3,17 @@
 ## Table of Contents
 1. [Updated Architecture](#updated-architecture)
 2. [Design Diagrams](#design-diagrams)
-3. [Refactored Module Structure](#refactored-module-structure)
-4. [Database Schema](#database-schema)
-5. [Migration Plan](#migration-plan)
-6. [Technology Stack Selection](#technology-stack-selection)
-7. [Component Mapping](#component-mapping)
-8. [Architecture Improvements](#architecture-improvements)
+3. [Sequence Diagrams](#sequence-diagrams)
+4. [Data Flow Diagrams](#data-flow-diagrams)
+5. [State Diagrams](#state-diagrams)
+6. [Refactored Module Structure](#refactored-module-structure)
+7. [Database Schema](#database-schema)
+8. [Migration Plan](#migration-plan)
+9. [Technology Stack Selection](#technology-stack-selection)
+10. [Component Mapping](#component-mapping)
+11. [Architecture Improvements](#architecture-improvements)
+12. [Deployment Diagram](#deployment-diagram)
+13. [Architecture Comparison](#architecture-comparison)
 
 ---
 
@@ -205,6 +210,8 @@ Client Request
 ```
 
 ### Class/Module Structure (TypeScript/JavaScript)
+
+**Detailed Class Diagrams:** See [DIAGRAMS.md](DIAGRAMS.md#reengineered-class-diagrams) for complete backend and frontend class structure with Mermaid diagrams.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -576,7 +583,11 @@ CREATE INDEX idx_employee_logs_employee ON employee_logs(employee_id);
 CREATE INDEX idx_employee_logs_timestamp ON employee_logs(timestamp);
 ```
 
+**Detailed ER Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#reengineered-database-schema) for complete normalized database schema with relationships and constraints.
+
 ### Schema Improvements Justification
+
+**Detailed ER Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#reengineered-database-schema) for complete normalized database schema with relationships and constraints.
 
 1. **Normalization**
    - Eliminated data redundancy
@@ -1050,6 +1061,54 @@ CREATE INDEX idx_employee_logs_timestamp ON employee_logs(timestamp);
 - Clear project structure
 
 **Benefit:** Faster development, fewer errors
+
+---
+
+## Deployment Diagram
+
+### Reengineered System Deployment
+
+The reengineered system uses a modern web deployment architecture:
+
+**Deployment Stack:**
+- **Web Server**: Nginx (ports 80/443) - Reverse proxy and static file serving
+- **Application Server**: PM2 managing Node.js/Express backend (port 3000)
+- **Database**: PostgreSQL (port 5432)
+- **Frontend**: React static files served by Nginx
+
+**Deployment Flow:**
+1. Client requests → Nginx (port 80/443)
+2. Static files (React) → Served directly by Nginx
+3. API requests (`/api/*`) → Proxied to Express backend (port 3000)
+4. Express backend → Queries PostgreSQL (port 5432)
+5. PM2 → Manages Node.js process lifecycle (restart, monitoring)
+
+**Deployment Characteristics:**
+- Single server deployment (can scale horizontally)
+- Nginx handles SSL termination and load balancing
+- PM2 ensures process reliability and auto-restart
+- Database runs on same or separate server
+- Stateless backend allows horizontal scaling
+
+**Detailed Deployment Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#reengineered-system-deployment) for deployment architecture diagram.
+
+---
+
+## Architecture Comparison
+
+### Side-by-Side Comparison
+
+A comprehensive comparison between legacy and reengineered architectures highlights the improvements:
+
+**Key Differences:**
+- **Architecture**: Desktop application → Web application
+- **Data Storage**: Text files → Relational database
+- **Deployment**: Single machine → Web server with PM2
+- **Scalability**: Single user → Multi-user concurrent
+- **Security**: Plain text passwords → Hashed passwords with JWT
+- **State Management**: File-based → Database transactions
+
+**Detailed Comparison Diagram:** See [DIAGRAMS.md](DIAGRAMS.md#architecture-comparison-diagram) for side-by-side architecture comparison.
 
 ---
 

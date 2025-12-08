@@ -9,6 +9,7 @@ export interface IItemRepository {
   updateQuantity(itemId: number, quantityChange: number, transaction?: Transaction): Promise<Item>;
   update(itemId: number, itemData: UpdateItemDTO): Promise<Item>;
   create(itemData: CreateItemDTO): Promise<Item>;
+  delete(id: number): Promise<void>;
 }
 
 export class ItemRepository implements IItemRepository {
@@ -67,6 +68,14 @@ export class ItemRepository implements IItemRepository {
       quantity: itemData.quantity,
       category: itemData.category || null
     });
+  }
+
+  async delete(id: number): Promise<void> {
+    const item = await Item.findByPk(id);
+    if (!item) {
+      throw new Error('Item not found');
+    }
+    await item.destroy();
   }
 }
 
